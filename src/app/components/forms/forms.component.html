@@ -1,0 +1,44 @@
+<ng-container>
+  <div class="row">
+    <div class="col">
+      <button
+        type="button"
+        class="btn btn-primary mb-4"
+        (click)="sendForm()"
+        *ngIf="!showTimer; else timerSection">
+        Submit all forms
+      </button>
+
+      <ng-template #timerSection>
+        <button
+          type="button"
+          class="btn btn-danger mb-4"
+          (click)="cancelSendingForm()">
+          Cancel
+        </button>
+
+        <span> {{ counter | formatTime }} </span>
+      </ng-template>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col d-flex gap flex-wrap">
+      <form [formGroup]="userFormsGroup" class="d-flex gap flex-wrap">
+        <ng-container formArrayName="formsArray">
+          <ng-container
+            *ngFor="let userForm of formsArray.controls; let index = index">
+            <app-form [userForm]="userForm"></app-form>
+          </ng-container>
+        </ng-container>
+
+        <button
+          type="button"
+          class="btn btn-outline-primary add-new"
+          (click)="addNewForm()"
+          [disabled]="formCardsCount() === 10 || showTimer">
+          <span class="plus">+</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</ng-container>

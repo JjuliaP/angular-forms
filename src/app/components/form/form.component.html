@@ -1,0 +1,79 @@
+<ng-container>
+  <div class="card">
+    <div class="card-body">
+      <form class="needs-validation" [formGroup]="userForm">
+        <div>
+          <div class="form-row">
+            <div class="col mb-4 relative">
+              <label for="country">Country</label>
+              <input
+                type="text"
+                class="form-control"
+                [ngClass]="{
+                  'is-invalid': countryControl.errors,
+                }"
+                id="country"
+                formControlName="country"
+                [appValidateCountry]="countryControl"
+                (input)="suggest()" />
+
+              <div class="invalid-tooltip">
+                Please provide a correct Country.
+              </div>
+
+              <div class="suggestions-dropdown" *ngIf="suggestions.length">
+                <ul class="dropdown-list">
+                  <li
+                    *ngFor="let s of suggestions"
+                    class="dropdown-item"
+                    (click)="setCountry(s)"
+                    (keyup)="setCountry(s)"
+                    role="button"
+                    tabIndex="{0}">
+                    {{ s }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col mb-4 relative">
+              <label for="username">Username</label>
+              <input
+                type="text"
+                class="form-control"
+                id="username"
+                formControlName="username"
+                [ngClass]="{
+                  'is-invalid': usernameControl.errors,
+                }"
+                [appValidateUsername]="usernameControl" />
+              <div class="invalid-tooltip">
+                Please provide a correct Username.
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col relative">
+              <label for="birthday">Birthday</label>
+              <input
+                type="date"
+                class="form-control"
+                id="birthday"
+                max="{{ date | date: 'yyyy-MM-dd' }}"
+                formControlName="birthday"
+                [ngClass]="{
+                  'is-invalid': birthdayControl.errors,
+                }" />
+              <div class="invalid-tooltip">
+                Please provide a correct Birthday.
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-container>
