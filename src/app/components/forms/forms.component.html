@@ -5,19 +5,22 @@
         type="button"
         class="btn btn-primary mb-4"
         (click)="sendForm()"
+        [disabled]="!formsArray.valid"
         *ngIf="!showTimer; else timerSection">
         Submit all forms
       </button>
 
       <ng-template #timerSection>
-        <button
-          type="button"
-          class="btn btn-danger mb-4"
-          (click)="cancelSendingForm()">
-          Cancel
-        </button>
+        <section class="timer-section">
+          <button
+            type="button"
+            class="btn btn-danger mb-4"
+            (click)="cancelSendingForm()">
+            Cancel
+          </button>
 
-        <span> {{ counter | formatTime }} </span>
+          <span> {{ counter | formatTime }} </span>
+        </section>
       </ng-template>
     </div>
   </div>
@@ -32,10 +35,10 @@
         </ng-container>
 
         <button
+          *ngIf="formCardsCount() !== 10 && !showTimer"
           type="button"
           class="btn btn-outline-primary add-new"
-          (click)="addNewForm()"
-          [disabled]="formCardsCount() === 10 || showTimer">
+          (click)="addNewForm()">
           <span class="plus">+</span>
         </button>
       </form>

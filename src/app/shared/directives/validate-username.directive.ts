@@ -1,6 +1,6 @@
 import { Directive, Input, AfterViewInit } from '@angular/core';
-import { AbstractControl, ValidationErrors } from '@angular/forms';
-import { Observable, map, of } from 'rxjs';
+import { AbstractControl, ValidationErrors, Validators } from '@angular/forms';
+import { Observable, map } from 'rxjs';
 import { ApiService } from '../api/api.service';
 
 @Directive({
@@ -14,15 +14,8 @@ export class ValidateUsernameDirective implements AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.appValidateUsername) {
-      const oldValidator = this.appValidateUsername.validator;
-      if (oldValidator) {
-        this.appValidateUsername.setValidators([oldValidator]);
+      this.appValidateUsername.setValidators([Validators.required]);
 
-        this.appValidateUsername.setAsyncValidators([
-          () => this.usernameValidator(this.appValidateUsername),
-        ]);
-        return;
-      }
       this.appValidateUsername.setAsyncValidators([
         () => this.usernameValidator(this.appValidateUsername),
       ]);
@@ -34,12 +27,8 @@ export class ValidateUsernameDirective implements AfterViewInit {
   ): Observable<ValidationErrors | null> {
     const value = control.value;
 
-    if (!value && !control.dirty && !control.touched) {
-      return of(null);
-    }
-
     return this.apiService
-      .checkUser(control.value)
+      .checkUser(value)
       .pipe(
         map((result: { isAvailable: boolean }) =>
           !result.isAvailable ? { usernameAlreadyExists: true } : null

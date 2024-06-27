@@ -8,7 +8,9 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { of } from 'rxjs';
 import { FormsComponent } from './forms.component';
 import { ApiService } from '../../shared/api/api.service';
+import { Country } from '../../shared/enum/country';
 
+const MAX_TIMER_COUNTDOWN = 15;
 class MockApiService {
   submitForm() {
     return of({});
@@ -50,16 +52,16 @@ describe('FormsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize with one form group', () => {
+  it('should initialize form array with one form group', () => {
     expect(component.formsArray.length).toBe(1);
   });
 
-  it('should add a new form group when addNewForm is called', () => {
+  it('should add a new form when addNewForm is called', () => {
     component.addNewForm();
     expect(component.formsArray.length).toBe(2);
   });
 
-  it('should not add more than 10 form groups', () => {
+  it('should not add more than 10 forms', () => {
     for (let i = 0; i < 10; i++) {
       component.addNewForm();
     }
@@ -68,28 +70,60 @@ describe('FormsComponent', () => {
     expect(component.formsArray.length).toBe(10);
   });
 
-  it('should disable form and start timer on sendForm', fakeAsync(() => {
+  it('should send form if valid', fakeAsync(() => {
+    const regionResponse = { region: 'Europe' };
+    spyOn(apiService, 'getRegion').and.returnValue(of(regionResponse));
     spyOn(apiService, 'submitForm').and.returnValue(of({ result: 'nice job' }));
+
+    component.formsArray.controls.forEach(control => {
+      control.get('country')?.setValue(Country.Ukraine);
+      control.get('username')?.setValue('new');
+      control.get('birthday')?.setValue('2024-06-21');
+    });
+
     component.sendForm();
-    expect(component.showTimer).toBeTrue();
-    expect(component.formsArray.disabled).toBeTrue();
-    tick(2000);
+    tick(MAX_TIMER_COUNTDOWN * 1000);
+
     expect(apiService.submitForm).toHaveBeenCalled();
   }));
 
-  it('should clear timer and reset form on successful submission', fakeAsync(() => {
+  it('should not send form if invalid', () => {
     spyOn(apiService, 'submitForm').and.returnValue(of({ result: 'nice job' }));
     component.sendForm();
-    expect(component.formsArray.disabled).toBeTrue();
-    tick(2000);
-    expect(component.formsArray.enabled).toBeTrue();
-    expect(component.showTimer).toBeFalse();
-  }));
+    expect(apiService.submitForm).not.toHaveBeenCalled();
+  });
 
-  it('should cancel the form submission and clear timer', fakeAsync(() => {
+  it('should cancel sending form', () => {
+    spyOn(window, 'clearTimeout');
     component.sendForm();
     component.cancelSendingForm();
+    expect(window.clearTimeout).toHaveBeenCalled();
     expect(component.showTimer).toBeFalse();
-    expect(component.formsArray.enabled).toBeTrue();
+  });
+
+  it('should transform country to correct region', fakeAsync(() => {
+    const regionResponse = { region: 'Europe' };
+    spyOn(apiService, 'getRegion').and.returnValue(of(regionResponse));
+    spyOn(apiService, 'submitForm').and.returnValue(of({ result: 'nice job' }));
+
+    component.formsArray.controls.forEach(control => {
+      control.get('country')?.setValue(Country.Ukraine);
+      control.get('username')?.setValue('new');
+      control.get('birthday')?.setValue('2024-06-21');
+    });
+
+    component.sendForm();
+    tick(MAX_TIMER_COUNTDOWN * 1000);
+
+    expect(apiService.getRegion).toHaveBeenCalledWith(Country.Ukraine);
+    expect(apiService.submitForm).toHaveBeenCalledWith([
+      {
+        region: 'Europe',
+        username: 'new',
+        birthday: '2024-06-21',
+      },
+    ]);
+    expect(component.showTimer).toBeFalse();
+    expect(component.counter).toBe(MAX_TIMER_COUNTDOWN);
   }));
 });

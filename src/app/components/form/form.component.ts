@@ -4,6 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Country } from '../../shared/enum/country';
 import { ValidateCountryDirective } from '../../shared/directives/validate-country.directive';
 import { ValidateUsernameDirective } from '../../shared/directives/validate-username.directive';
+import { ValidateBirthdayDirective } from '../../shared/directives/validate-birthday.directive';
 
 @Component({
   selector: 'app-form',
@@ -14,6 +15,7 @@ import { ValidateUsernameDirective } from '../../shared/directives/validate-user
     CommonModule,
     ValidateCountryDirective,
     ValidateUsernameDirective,
+    ValidateBirthdayDirective,
   ],
   templateUrl: './form.component.html',
   styleUrl: './form.component.scss',
@@ -23,7 +25,7 @@ export class FormComponent implements OnInit {
 
   public date: string = '';
   public suggestions: Country[] = [];
-  public countries: Country[] = Object.values(Country);
+  public countries: Country[] = Object.values(Country).sort();
 
   get usernameControl(): FormControl {
     return this.userForm?.get('username') as FormControl;
@@ -61,10 +63,7 @@ export class FormComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   public onGlobalClick(event: Event): void {
     const element = <HTMLDivElement | HTMLInputElement>event.target;
-    if (
-      element?.id !== 'country' &&
-      element?.className !== 'dropdown-item'
-    ) {
+    if (element?.id !== 'country' && element?.className !== 'dropdown-item') {
       this.suggestions = [];
     }
   }

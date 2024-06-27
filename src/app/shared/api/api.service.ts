@@ -21,7 +21,6 @@ export class ApiService {
   }
 
   public submitForm(body: SubmitBody[]): Observable<{ result: string }> {
-    console.warn(body);
     return this.http.post<{ result: string }>('/api/submitForm', {
       body,
     });

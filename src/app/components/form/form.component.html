@@ -10,7 +10,10 @@
                 type="text"
                 class="form-control"
                 [ngClass]="{
-                  'is-invalid': countryControl.errors,
+                  'is-invalid':
+                    countryControl.errors &&
+                    countryControl.dirty &&
+                    countryControl.touched,
                 }"
                 id="country"
                 formControlName="country"
@@ -24,11 +27,12 @@
               <div class="suggestions-dropdown" *ngIf="suggestions.length">
                 <ul class="dropdown-list">
                   <li
-                    *ngFor="let s of suggestions"
+                    *ngFor="let s of suggestions; let i = index"
                     class="dropdown-item"
                     (click)="setCountry(s)"
                     (keyup)="setCountry(s)"
                     role="button"
+                    aria-hidden="true"
                     tabIndex="{0}">
                     {{ s }}
                   </li>
@@ -46,7 +50,10 @@
                 id="username"
                 formControlName="username"
                 [ngClass]="{
-                  'is-invalid': usernameControl.errors,
+                  'is-invalid':
+                    usernameControl.errors &&
+                    usernameControl.touched &&
+                    usernameControl.dirty,
                 }"
                 [appValidateUsername]="usernameControl" />
               <div class="invalid-tooltip">
@@ -64,8 +71,12 @@
                 id="birthday"
                 max="{{ date | date: 'yyyy-MM-dd' }}"
                 formControlName="birthday"
+                [appValidateBirthday]="birthdayControl"
                 [ngClass]="{
-                  'is-invalid': birthdayControl.errors,
+                  'is-invalid':
+                    birthdayControl.errors &&
+                    birthdayControl.touched &&
+                    birthdayControl.dirty,
                 }" />
               <div class="invalid-tooltip">
                 Please provide a correct Birthday.

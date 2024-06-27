@@ -67,7 +67,7 @@ describe('ApiService', () => {
         {
           region: 'America',
           username: 'testuser',
-          birthday: new Date(),
+          birthday: '2024-06-21',
         },
       ];
 

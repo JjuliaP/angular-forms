@@ -1,5 +1,5 @@
 import { Directive, Input, AfterViewInit } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, Validators } from '@angular/forms';
 import { Country } from '../enum/country';
 
 @Directive({
@@ -11,25 +11,16 @@ export class ValidateCountryDirective implements AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.appValidateCountry) {
-      const oldValidator = this.appValidateCountry.validator;
-      if (oldValidator) {
-        this.appValidateCountry.setValidators([
-          this.countryValidator,
-          oldValidator,
-        ]);
-
-        return;
-      }
-      this.appValidateCountry.setValidators([this.countryValidator]);
+      this.appValidateCountry.setValidators([
+        this.countryValidator,
+        Validators.required,
+      ]);
     }
   }
 
   countryValidator(control: AbstractControl) {
     const value = control.value;
 
-    if (!value) {
-      return null;
-    }
     return Object.values(Country).includes(value) ? null : { country: true };
   }
 }
