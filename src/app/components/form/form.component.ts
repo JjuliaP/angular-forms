@@ -44,15 +44,16 @@ export class FormComponent implements OnInit {
   }
 
   public suggest(): void {
-    this.suggestions = this.countries
-      .filter(c =>
+    console.warn(this.countryControl.value);
+    if (this.countryControl.value === '') {
+      this.suggestions = this.countries;
+    } else {
+      this.suggestions = this.countries.filter(c =>
         c
           .toLowerCase()
-          .startsWith(
-            this.userForm.controls['country'].value?.toLowerCase() || ''
-          )
-      )
-      .slice(0, 5);
+          .startsWith(this.countryControl.value?.toLowerCase() || '')
+      );
+    }
   }
 
   public setCountry(selectedCountry: Country): void {

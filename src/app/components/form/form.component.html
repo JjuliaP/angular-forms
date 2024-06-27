@@ -4,7 +4,7 @@
       <form class="needs-validation" [formGroup]="userForm">
         <div>
           <div class="form-row">
-            <div class="col mb-4 relative">
+            <div class="col mb-5 relative">
               <label for="country">Country</label>
               <input
                 type="text"
@@ -18,7 +18,8 @@
                 id="country"
                 formControlName="country"
                 [appValidateCountry]="countryControl"
-                (input)="suggest()" />
+                (input)="suggest()"
+                (focus)="suggest()" />
 
               <div class="invalid-tooltip">
                 Please provide a correct Country.
@@ -42,7 +43,7 @@
           </div>
 
           <div class="form-row">
-            <div class="col mb-4 relative">
+            <div class="col mb-5 relative">
               <label for="username">Username</label>
               <input
                 type="text"

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormControl,
@@ -46,9 +47,7 @@ export class FormsComponent {
   public userFormsGroup = new FormGroup({
     formsArray: this.fb.array<FormGroup>([
       new FormGroup({
-        country: new FormControl('', {
-          updateOn: 'blur',
-        }),
+        country: new FormControl(''),
         username: new FormControl('', {
           updateOn: 'blur',
         }),
@@ -78,9 +77,7 @@ export class FormsComponent {
   public addNewForm(): void {
     if (this.formCardsCount() < 10) {
       const childForm = new FormGroup({
-        country: new FormControl('', {
-          updateOn: 'blur',
-        }),
+        country: new FormControl(''),
         username: new FormControl('', {
           updateOn: 'blur',
         }),
@@ -95,9 +92,11 @@ export class FormsComponent {
   public sendForm(): void {
     // show all errors on form inputs
     this.formsArray.controls.forEach(formGroup =>
-      Object.values(formGroup.controls).forEach(control =>
-        control.updateValueAndValidity()
-      )
+      Object.values(formGroup.controls).forEach(control => {
+        control.markAllAsTouched();
+        control.markAsDirty();
+        control.updateValueAndValidity();
+      })
     );
 
     if (!this.formsArray.valid) {
