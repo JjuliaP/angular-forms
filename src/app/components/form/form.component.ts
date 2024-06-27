@@ -44,7 +44,6 @@ export class FormComponent implements OnInit {
   }
 
   public suggest(): void {
-    console.warn(this.countryControl.value);
     if (this.countryControl.value === '') {
       this.suggestions = this.countries;
     } else {
